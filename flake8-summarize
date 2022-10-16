@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Make sure to have Github Actions: setup-python
+# Make sure to install latest pip and flake8 package
+
+FLAKE8_ARGS="$@"
+FLAKE8_OUT=$(flake8 --tee --format='%(path)s:%(row)d:%(col)d:%(code)s:%(text)s' $FLAKE8_ARGS)
+
+# Markdown properties
+SUMMARY=""
+TABLE_HEADERS=("Location" "Row" "Col" "Code" "Explanation")
+
+SUMMARY+=$'# Linting Summary\n'
+SUMMARY+="|${TABLE_HEADERS[0]}|${TABLE_HEADERS[1]}|${TABLE_HEADERS[2]}|${TABLE_HEADERS[3]}|${TABLE_HEADERS[4]}|"$'\n|:--|:-:|:-:|:--|:--|\n'
+
+# Use double-quotes to preserve newlines.
+# echo "$FLAKE8_OUT"
+COUNT=0
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  while IFS=':' read -ra entry; do
+    SUMMARY+="|\`${entry[0]}\`|\`${entry[1]}\`|\`${entry[2]}\`|\`${entry[3]}\`|\`${entry[4]}\`|"$'\n'
+    COUNT+=1
+  done <<< "$line"
+done <<< "$FLAKE8_OUT"
+
+if [ $COUNT -le 0 ]; then
+  SUMMARY+=$'\n🎉🎉 Code looks pretty clean! 🎉🎉'
+fi
+
+echo "$SUMMARY"
