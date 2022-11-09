@@ -8,10 +8,10 @@ if [ -z $1 ]; then
 fi
 
 # Check if Dockerfile and cst-config.yml is in the working directory.
-#if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
-#  echo No Dockerfile or cst-config.yml, skipping...
-#  exit 0
-#fi
+if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
+  echo No Dockerfile or cst-config.yml, skipping...
+  exit 0
+fi
 
 # Fetch the `container-structure-test` executable
 if ! [ -f /tmp/cst ]; then
@@ -35,7 +35,7 @@ if [ -n ${@:2:1} ]; then
   done
 fi
 if [ -n "$BUILD_ARGS" ]; then
-  # echo Building with args: $BUILD_ARGS
+  echo Building with args: $BUILD_ARGS
   docker build -t ${IMAGE_TAG} $BUILD_ARGS .
 else
   docker build -t ${IMAGE_TAG} .
