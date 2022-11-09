@@ -35,7 +35,7 @@ if [ -n ${@:2:1} ]; then
   done
 fi
 if [ -n "$BUILD_ARGS" ]; then
-  echo Building with args: $BUILD_ARGS
+  # echo Building with args: $BUILD_ARGS
   docker build . -t ${IMAGE_TAG} --build-arg $BUILD_ARGS
 else
   docker build . -t ${IMAGE_TAG}
