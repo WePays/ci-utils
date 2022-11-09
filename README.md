@@ -33,3 +33,17 @@ run: |
   ```sh
   flake8-summarize >> $GITHUB_STEP_SUMMARY
   ```
+
+* [test-dockerfile](test-dockerfile): a utility that will download [`container-structure-test`](https://github.com/GoogleContainerTools/container-structure-test) to workflow,
+  and you can test your Dockerfile with it.
+
+  **Prerequisites:**
+  * `Dockerfile` written and is in repository
+  * `cst-config.yml` written and is in repository, see syntax for `container-structure-test` YAML file in their README.md
+
+  **Example:**
+  ```sh
+  # to use test-dockerfile, you need to specify image tag as an argument.
+  test-dockerfile wongnung:testdrive
+  ```
+

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+IMAGE_TAG=$1
+
+if [ -z $1 ]; then
+  echo You must specify an image tag for Docker to use.
+  exit 2
+fi
+
+# Check if Dockerfile and cst-config.yml is in the working directory.
+if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
+  echo No Dockerfile or cst-config.yml, skipping...
+  exit 0
+fi
+
+# Fetch the `container-structure-test` executable
+if ! [ -f /tmp/cst ]; then
+curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && \
+  chmod +x container-structure-test-linux-amd64 && \
+  mv container-structure-test-linux-amd64 /tmp/cst
+fi
+
+# Declare a function to be call CST executable
+function cst {
+  /tmp/cst "$@"
+}
+
+# Build docker image
+echo Building image ${IMAGE_TAG}...
+docker build . -t ${IMAGE_TAG}
+
+# Run CST on docker image
+cst test --image ${IMAGE_TAG} --config cst-config.yml
