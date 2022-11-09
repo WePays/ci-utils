@@ -3,15 +3,15 @@
 IMAGE_TAG=$1
 
 if [ -z $1 ]; then
-  echo You must specify an image tag for Docker to use.
+  echo "Usage: test-dockerfile [image_tag] (args...)"
   exit 2
 fi
 
 # Check if Dockerfile and cst-config.yml is in the working directory.
-if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
-  echo No Dockerfile or cst-config.yml, skipping...
-  exit 0
-fi
+#if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
+#  echo No Dockerfile or cst-config.yml, skipping...
+#  exit 0
+#fi
 
 # Fetch the `container-structure-test` executable
 if ! [ -f /tmp/cst ]; then
@@ -27,7 +27,19 @@ function cst {
 
 # Build docker image
 echo Building image ${IMAGE_TAG}...
-docker build . -t ${IMAGE_TAG}
+
+BUILD_ARGS=""
+if [ -n ${@:2:1} ]; then
+  for arg in "${@:2}"; do
+    BUILD_ARGS="$BUILD_ARGS $(printenv | grep $arg)"
+  done
+fi
+if [ -n "$BUILD_ARGS" ]; then
+  echo Building with args: $BUILD_ARGS
+  docker build . -t ${IMAGE_TAG} --build-arg $BUILD_ARGS
+else
+  docker build . -t ${IMAGE_TAG}
+fi
 
 # Run CST on docker image
 cst test --image ${IMAGE_TAG} --config cst-config.yml
