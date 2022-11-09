@@ -31,7 +31,7 @@ echo Building image ${IMAGE_TAG}...
 BUILD_ARGS=""
 if [ -n ${@:2:1} ]; then
   for arg in "${@:2}"; do
-    BUILD_ARGS="$BUILD_ARGS $(printenv | grep $arg)"
+    BUILD_ARGS="$BUILD_ARGS --build-arg $(printenv | grep $arg)"
   done
 fi
 if [ -n "$BUILD_ARGS" ]; then
