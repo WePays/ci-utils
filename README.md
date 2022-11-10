@@ -34,8 +34,7 @@ run: |
   flake8-summarize >> $GITHUB_STEP_SUMMARY
   ```
 
-* [test-dockerfile](test-dockerfile): a utility that will download [`container-structure-test`](https://github.com/GoogleContainerTools/container-structure-test) to workflow,
-  and you can test your Dockerfile with it.
+* [test-dockerfile](test-dockerfile): a utility that will download [`container-structure-test`](https://github.com/GoogleContainerTools/container-structure-test) to workflow, and you can test your Dockerfile with it.
 
   **Prerequisites:**
   * `Dockerfile` written and is in repository
@@ -45,5 +44,21 @@ run: |
   ```sh
   # to use test-dockerfile, you need to specify image tag as an argument.
   test-dockerfile wongnung:testdrive
+  
+  # you can also pass in environment variables, using their names.
+  # but you also need to specify a section for build arguements in Dockerfile
+  export KEY=1234
+  test-dockerfile wongnung:testdrive KEY
+  ```
+  
+  **To pass in Environment Variables,** you should add a section marker `# buildargs` to your Dockerfile
+  ```dockerfile
+  FROM ubuntu:latest
+  #...
+  
+  # buildargs
+  
+  #...
+  RUN echo "Hello world!"
   ```
 
