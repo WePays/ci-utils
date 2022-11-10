@@ -40,17 +40,6 @@ run: |
   * `Dockerfile` written and is in repository
   * `cst-config.yml` written and is in repository, see syntax for `container-structure-test` YAML file in their README.md
 
-  **Example:**
-  ```sh
-  # to use test-dockerfile, you need to specify image tag as an argument.
-  test-dockerfile wongnung:testdrive
-  
-  # you can also pass in environment variables, using their names.
-  # but you also need to specify a section for build arguements in Dockerfile
-  export KEY=1234
-  test-dockerfile wongnung:testdrive KEY
-  ```
-  
   **To pass in Environment Variables,** you should add a section marker `# buildargs` to your Dockerfile
   ```dockerfile
   FROM ubuntu:latest
@@ -62,3 +51,13 @@ run: |
   RUN echo "Hello world!"
   ```
 
+  **Example:**
+  ```sh
+  # to use test-dockerfile, you need to specify image tag as an argument.
+  test-dockerfile wongnung:testdrive
+  
+  # you can also pass in environment variables, using their names.
+  # but you also need to specify a section for build arguements in Dockerfile
+  export KEY=1234
+  test-dockerfile wongnung:testdrive KEY
+  ```
