@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 IMAGE_TAG=$1
+CST_OS=linux-amd64
 
 if [ -z $1 ]; then
   echo "Usage: test-dockerfile [image_tag] (args...)"
@@ -15,9 +16,9 @@ fi
 
 # Fetch the `container-structure-test` executable
 if ! [ -f /tmp/cst ]; then
-curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && \
-  chmod +x container-structure-test-linux-amd64 && \
-  mv container-structure-test-linux-amd64 /tmp/cst
+curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-${CST_OS} && \
+  chmod +x container-structure-test-${CST_OS} && \
+  mv container-structure-test-${CST_OS} /tmp/cst
 fi
 
 # Declare a function to be call CST executable
@@ -35,7 +36,7 @@ if [ -n ${@:2:1} ]; then
   done
 fi
 if [ -n "$BUILD_ARGS" ]; then
-  echo Building with args: $BUILD_ARGS
+  echo "Building with args: $BUILD_ARGS"
   docker build -t ${IMAGE_TAG} $BUILD_ARGS .
 else
   docker build -t ${IMAGE_TAG} .
