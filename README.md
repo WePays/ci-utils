@@ -61,3 +61,13 @@ run: |
   export KEY=1234
   test-dockerfile wongnung:testdrive KEY
   ```
+
+### Incompleted Utilities
+
+* selenium-browser-neutralize: a utility that replaces all occurence of Python source files that are Selenium browser names to the same names, as set in executable argument.
+
+  **Example:**
+  ```sh
+  # Changes all occurences of Firefox, Chromium, Opera etc. to Chrome
+  selenium-browser-neutralize "Chrome"
+  ```
