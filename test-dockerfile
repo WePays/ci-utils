@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+IMAGE_TAG=$1
+CST_OS=linux-amd64
+UUID=$(cat /proc/sys/kernel/random/uuid)
+
+if [ -z $1 ]; then
+  echo "Usage: test-dockerfile [image_tag] (args...)"
+  exit 2
+fi
+
+# Check if Dockerfile and cst-config.yml is in the working directory.
+if ! [ -f ./Dockerfile ] || ! [ -f ./cst-config.yml ]; then
+  echo No Dockerfile or cst-config.yml, skipping...
+  exit 0
+fi
+
+# Fetch the `container-structure-test` executable
+if ! [ -f /tmp/cst ]; then
+curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-${CST_OS} && \
+  chmod +x container-structure-test-${CST_OS} && \
+  mv container-structure-test-${CST_OS} /tmp/cst
+fi
+
+# Declare a function to be call CST executable
+function cst {
+  /tmp/cst "$@"
+}
+
+# Build docker image
+DOCKERFILE=/tmp/${UUID}.dockerfile
+cp ./Dockerfile $DOCKERFILE
+
+echo Building image ${IMAGE_TAG}...
+
+BUILD_ARGS=""
+if [ -n ${@:2:1} ]; then
+  for arg in "${@:2}"; do
+    BUILD_ARGS="$BUILD_ARGS --build-arg $(printenv | grep $arg)"
+    sed -i "/# buildargs/a ARG $arg\nENV $arg=\$$arg" $DOCKERFILE
+  done
+fi
+if [ -n "$BUILD_ARGS" ]; then
+  echo "Building with args: $BUILD_ARGS"
+  docker build -t ${IMAGE_TAG} $BUILD_ARGS -f ${DOCKERFILE} .
+else
+  docker build -t ${IMAGE_TAG} -f ${DOCKERFILE} .
+fi
+
+# Run CST on docker image
+cst test --image ${IMAGE_TAG} --config cst-config.yml
